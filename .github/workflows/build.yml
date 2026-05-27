@@ -17,9 +17,9 @@ jobs:
 
       - name: Fix Gradle wrapper
         run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.0-bin.zip -O gradle-8.0-bin.zip
-          unzip -q gradle-8.0-bin.zip
-          gradle-8.0/bin/gradle wrapper --gradle-version 8.0
+          wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip -O gradle-8.2-bin.zip
+          unzip -q gradle-8.2-bin.zip
+          gradle-8.2/bin/gradle wrapper --gradle-version 8.2
           chmod +x gradlew
 
       - name: Build Release APK
