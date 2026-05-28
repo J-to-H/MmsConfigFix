@@ -28,11 +28,11 @@ jobs:
       - name: Sign and Align APK
         run: |
           keytool -genkey -v -keystore debug.keystore -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Android Debug,O=Android,C=US"
-          jarsigner -keystore debug.keystore -storepass android -keypass android -signedjar app/build/outputs/apk/release/app-release-signed.apk app/build/outputs/apk/release/app-release-unsigned.apk androiddebugkey
-          ${ANDROID_HOME}/build-tools/34.0.0/zipalign -v 4 app/build/outputs/apk/release/app-release-signed.apk app/build/outputs/apk/release/app-release-aligned.apk
+          ${ANDROID_HOME}/build-tools/34.0.0/zipalign -v 4 app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/app-release-aligned.apk
+          ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks debug.keystore --ks-pass pass:android --key-pass pass:android --out app/build/outputs/apk/release/app-release-signed.apk app/build/outputs/apk/release/app-release-aligned.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: MmsConfigFix
-          path: app/build/outputs/apk/release/app-release-aligned.apk
+          path: app/build/outputs/apk/release/app-release-signed.apk
