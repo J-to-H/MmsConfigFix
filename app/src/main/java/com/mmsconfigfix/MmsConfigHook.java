@@ -1,6 +1,6 @@
 package com.mmsconfigfix;
 
-import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.telephony.CarrierConfigManager;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -24,8 +24,8 @@ public class MmsConfigHook implements IXposedHookLoadPackage {
             new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) {
-                    Bundle config = (Bundle) param.getResult();
-                    if (config == null) config = new Bundle();
+                    PersistableBundle config = (PersistableBundle) param.getResult();
+                    if (config == null) config = new PersistableBundle();
                     config.putInt("maxMessageSize", MAX_MESSAGE_SIZE);
                     config.putInt("maxImageWidth", MAX_IMAGE_WIDTH);
                     config.putInt("maxImageHeight", MAX_IMAGE_HEIGHT);
@@ -34,7 +34,6 @@ public class MmsConfigHook implements IXposedHookLoadPackage {
             }
         );
 
-        // Also hook getConfigForSubId in case Messages uses that variant
         try {
             XposedHelpers.findAndHookMethod(
                 CarrierConfigManager.class,
@@ -43,8 +42,8 @@ public class MmsConfigHook implements IXposedHookLoadPackage {
                 new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) {
-                        Bundle config = (Bundle) param.getResult();
-                        if (config == null) config = new Bundle();
+                        PersistableBundle config = (PersistableBundle) param.getResult();
+                        if (config == null) config = new PersistableBundle();
                         config.putInt("maxMessageSize", MAX_MESSAGE_SIZE);
                         config.putInt("maxImageWidth", MAX_IMAGE_WIDTH);
                         config.putInt("maxImageHeight", MAX_IMAGE_HEIGHT);
