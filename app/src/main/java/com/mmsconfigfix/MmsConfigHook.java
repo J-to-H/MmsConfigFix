@@ -3,8 +3,8 @@ package com.mmsconfigfix;
 import android.os.PersistableBundle;
 import android.telephony.CarrierConfigManager;
 
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -23,7 +23,7 @@ public class MmsConfigHook implements IXposedHookLoadPackage {
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
         if (!lpparam.packageName.equals("com.google.android.apps.messaging")) return;
 
-        // Hook CarrierConfigManager
+        // Hook CarrierConfigManager.getConfig()
         XposedHelpers.findAndHookMethod(
             CarrierConfigManager.class,
             "getConfig",
@@ -40,6 +40,7 @@ public class MmsConfigHook implements IXposedHookLoadPackage {
             }
         );
 
+        // Hook CarrierConfigManager.getConfigForSubId()
         try {
             XposedHelpers.findAndHookMethod(
                 CarrierConfigManager.class,
@@ -59,17 +60,19 @@ public class MmsConfigHook implements IXposedHookLoadPackage {
             );
         } catch (Throwable ignored) {}
 
-        // Hook HttpURLConnection to inject Pixel headers on MMSC requests
+        // Hook URL.openConnection() to inject Pixel headers into MMSC requests
         XposedHelpers.findAndHookMethod(
-            HttpURLConnection.class,
-            "connect",
+            URL.class,
+            "openConnection",
             new XC_MethodHook() {
                 @Override
-                protected void beforeHookedMethod(MethodHookParam param) {
+                protected void afterHookedMethod(MethodHookParam param) {
                     try {
-                        HttpURLConnection conn = (HttpURLConnection) param.thisObject;
-                        String url = conn.getURL().toString();
-                        if (url.contains("mms.vtext.com") || url.contains("mmsc") || url.contains("mms")) {
+                        URLConnection conn = (URLConnection) param.getResult();
+                        String url = ((URL) param.thisObject).toString();
+                        if (url.contains("63.59.138.138") || 
+                            url.contains("vtext.com") || 
+                            url.contains("mms")) {
                             conn.setRequestProperty("User-Agent", PIXEL_UA);
                             conn.setRequestProperty("x-wap-profile", PIXEL_UA_PROF);
                         }
