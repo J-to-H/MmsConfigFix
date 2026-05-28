@@ -21,7 +21,7 @@ public class MmsConfigHook implements IXposedHookLoadPackage {
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) {
-        if (!lpparam.packageName.equals("com.google.android.apps.messaging")) return;
+        if (!lpparam.packageName.equals("com.android.phone")) return;
 
         // Hook CarrierConfigManager.getConfig()
         XposedHelpers.findAndHookMethod(
