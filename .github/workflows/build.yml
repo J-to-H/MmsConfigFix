@@ -25,14 +25,7 @@ jobs:
       - name: Build Release APK
         run: ./gradlew assembleRelease
 
-     - name: Sign and Align APK
+      - name: Sign and Align APK
         run: |
           keytool -genkey -v -keystore debug.keystore -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Android Debug,O=Android,C=US"
-          jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore debug.keystore -storepass android -keypass android app/build/outputs/apk/release/app-release-unsigned.apk androiddebugkey
-          ${ANDROID_HOME}/build-tools/34.0.0/zipalign -v 4 app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/app-release-aligned.apk
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: MmsConfigFix
-          path: app/build/outputs/apk/release/app-release-aligned.apk
+          jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore debug.keystore -sto
